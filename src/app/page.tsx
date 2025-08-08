@@ -27,7 +27,6 @@ import {
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
-
 type FormData = {
   nome: string;
   email: string;
@@ -137,6 +136,28 @@ function App() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    // Validação: campos não podem ser apenas espaços
+    if (!formData.nome.trim()) {
+      setError("O nome não pode estar vazio ou conter apenas espaços.");
+      return;
+    }
+    if (!formData.email.trim()) {
+      setError("O e-mail não pode estar vazio ou conter apenas espaços.");
+      return;
+    }
+    if (!formData.telefone.trim()) {
+      setError("O telefone não pode estar vazio ou conter apenas espaços.");
+      return;
+    }
+    if (!formData.assunto.trim()) {
+      setError("O assunto não pode estar vazio ou conter apenas espaços.");
+      return;
+    }
+    if (!formData.mensagem.trim()) {
+      setError("A mensagem não pode estar vazia ou conter apenas espaços.");
+      return;
+    }
+
     if (!formData.recaptchaToken) {
       setError("Por favor, marque a caixa 'Não sou um robô'");
       return;
@@ -153,11 +174,11 @@ function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nome: formData.nome,
-          email: formData.email,
-          telefone: formData.telefone,
-          assunto: formData.assunto,
-          mensagem: formData.mensagem,
+          nome: formData.nome.trim(),
+          email: formData.email.trim(),
+          telefone: formData.telefone.trim(),
+          assunto: formData.assunto.trim(),
+          mensagem: formData.mensagem.trim(),
           recaptchaToken: formData.recaptchaToken,
         }),
       });
