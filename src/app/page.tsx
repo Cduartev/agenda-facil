@@ -168,20 +168,23 @@ function App() {
     setSuccess(false);
 
     try {
-      const response = await fetch("http://localhost:8080/contato", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nome: formData.nome.trim(),
-          email: formData.email.trim(),
-          telefone: formData.telefone.trim(),
-          assunto: formData.assunto.trim(),
-          mensagem: formData.mensagem.trim(),
-          recaptchaToken: formData.recaptchaToken,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/contato`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: formData.nome.trim(),
+            email: formData.email.trim(),
+            telefone: formData.telefone.trim(),
+            assunto: formData.assunto.trim(),
+            mensagem: formData.mensagem.trim(),
+            recaptchaToken: formData.recaptchaToken,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -249,9 +252,7 @@ function App() {
                 Contato
               </a>
               <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                <Link href="/login">
-                Faca o login
-                </Link>
+                <Link href="/login">Faca o login</Link>
               </Button>
             </div>
 
@@ -338,15 +339,13 @@ function App() {
                 >
                   Agendar Agora
                 </Button>
-                
+
                 <Button
                   size="lg"
                   className="text-white bg-yellow-600 hover:bg-yellow-700 hover:text-black px-8 py-6 text-lg"
-                ><Link href="/barbearia">
-                  Cadastrar Barebearia
-                  </Link>
+                >
+                  <Link href="/barbearia">Cadastrar Barebearia</Link>
                 </Button>
-                
               </div>
 
               {/* Quick Stats */}
@@ -743,7 +742,7 @@ function App() {
                   <div>
                     <ReCAPTCHA
                       ref={recaptchaRef}
-                      sitekey="6LfxFp4rAAAAABcLVq170PCbM4hdQU6M1SDZob3j"
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
                       onChange={(token) =>
                         setFormData({ ...formData, recaptchaToken: token })
                       }
