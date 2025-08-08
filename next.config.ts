@@ -1,7 +1,16 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone', // Para produção com Docker
+  // OR para desenvolvimento:
+  // assetPrefix: '/_next/static',
+  async rewrites() {
+    return [
+      {
+        source: '/_next/static/:path*',
+        destination: '/_next/static/:path*',
+      },
+    ]
+  }
+}
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+module.exports = nextConfig
