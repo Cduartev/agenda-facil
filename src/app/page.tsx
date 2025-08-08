@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
+import Link from "next/link";
 
 type FormData = {
   nome: string;
@@ -249,7 +250,9 @@ function App() {
                 Contato
               </a>
               <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                Agendar Agora
+                <Link href="/login">
+                Faca o login
+                </Link>
               </Button>
             </div>
 
@@ -336,12 +339,15 @@ function App() {
                 >
                   Agendar Agora
                 </Button>
+                
                 <Button
                   size="lg"
                   className="text-white bg-yellow-600 hover:bg-yellow-700 hover:text-black px-8 py-6 text-lg"
-                >
-                  Sou Barbeiro
+                ><Link href="/barbearia">
+                  Cadastrar Barebearia
+                  </Link>
                 </Button>
+                
               </div>
 
               {/* Quick Stats */}
