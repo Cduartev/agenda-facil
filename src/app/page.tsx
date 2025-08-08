@@ -742,7 +742,7 @@ function App() {
                   <div>
                     <ReCAPTCHA
                       ref={recaptchaRef}
-                      sitekey="6LfxFp4rAAAAABcLVq170PCbM4hdQU6M1SDZob3j"
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
                       onChange={(token) =>
                         setFormData({ ...formData, recaptchaToken: token })
                       }
