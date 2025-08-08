@@ -24,7 +24,6 @@ import {
   Twitter,
   Linkedin,
 } from "lucide-react";
-import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 import Link from "next/link";
 
