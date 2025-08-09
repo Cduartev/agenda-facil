@@ -344,7 +344,7 @@ function App() {
                   size="lg"
                   className="text-white bg-yellow-600 hover:bg-yellow-700 hover:text-black px-8 py-6 text-lg"
                 >
-                  <Link href="/barbearia">Cadastrar Barebearia</Link>
+                  <Link href="/barbearia">Aonde nos Encontar</Link>
                 </Button>
               </div>
 
@@ -537,7 +537,7 @@ function App() {
                   Fazer Primeiro Agendamento
                 </Button>
                 <Button className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-4 text-lg font-semibold">
-                  Cadastrar Barbearia
+                  Encontar A Barber Pro Mais proxima
                 </Button>
               </div>
             </div>
