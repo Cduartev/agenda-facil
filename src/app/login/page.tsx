@@ -46,7 +46,7 @@ function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLoading) return; // bloqueia múltiplos cliques enquanto está carregando
+    if (isLoading) return;
     setMessage("");
     setIsLoading(true);
 
@@ -80,7 +80,7 @@ function App() {
       try {
         const res = await fetch(
           `${API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
-            "http://localhost:3000/confirmar-email"
+            `${API_URL}/confirmar-email`
           )}`,
           {
             method: "POST",
