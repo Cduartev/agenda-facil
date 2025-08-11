@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -23,14 +24,16 @@ import {
 } from "lucide-react";
 
 function App() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(true); // true = login, false = cadastro
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
+  const [message, setMessage] = useState(""); // mensagem sucesso/erro
+  const [isLoading, setIsLoading] = useState(false); // estado para bloquear botão e mostrar loading
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -41,47 +44,96 @@ function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return; // bloqueia múltiplos cliques enquanto está carregando
+    setMessage("");
+    setIsLoading(true);
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("As senhas não conferem");
-      return;
-    }
+    if (isLogin) {
+      // LOGIN
+      try {
+        const res = await fetch("http://localhost:8080/usuarios/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
 
-    // Link base para confirmação do email, pode ser URL do frontend onde usuário clica para confirmar
-    const linkBaseConfirmacao = "http://localhost:3000/confirmar-email";
+        if (!res.ok) {
+          const errMsg = await res.text();
+          setMessage("Erro no login: " + errMsg);
+          setIsLoading(false);
+          return;
+        }
 
-    try {
-      const url = `http://localhost:8080/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
-        linkBaseConfirmacao
-      )}`;
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      if (!res.ok) {
-        const errMsg = await res.text();
-        alert("Erro: " + errMsg);
-        return;
+        router.push("/");
+      } catch (error) {
+        setMessage("Erro ao conectar com backend no login");
+        console.error(error);
+        setIsLoading(false);
       }
+    } else {
+      // CADASTRO
+      try {
+        const res = await fetch(
+          `http://localhost:8080/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
+            "http://localhost:3000/confirmar-email"
+          )}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: formData.name,
+              email: formData.email,
+              password: formData.password,
+            }),
+          }
+        );
 
-      const data = await res.text();
-      alert(data);
+        if (!res.ok) {
+          const errMsg = await res.text();
+          setMessage("Erro no cadastro: " + errMsg);
+          setIsLoading(false);
+          return;
+        }
 
-      // Limpa formulário e volta para login (se tiver essa lógica)
-      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-      setIsLogin(true);
-    } catch (error) {
-      alert("Erro ao conectar com backend");
-      console.error(error);
+        const successMsg = await res.text();
+        setMessage(successMsg);
+        setFormData({ name: "", email: "", password: "" });
+        setIsLogin(true);
+        setIsLoading(false);
+      } catch (error) {
+        setMessage("Erro ao conectar com backend no cadastro");
+        console.error(error);
+        setIsLoading(false);
+      }
     }
   };
+
+  // Spinner simples (círculo giratório) via CSS inline
+  const Spinner = () => (
+    <svg
+      className="animate-spin h-5 w-5 text-white inline-block mr-2"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+      ></path>
+    </svg>
+  );
 
   return (
     <div className="min-h-screen flex">
@@ -103,9 +155,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-3xl font-bold">Barber Pro</h1>
-              <p className="text-yellow-400 font-medium">
-                Professional Barbershop
-              </p>
+              <p className="text-yellow-400 font-medium">Professional Barbershop</p>
             </div>
           </div>
           <div className="space-y-6">
@@ -139,12 +189,12 @@ function App() {
             <CardHeader className="space-y-4 pb-8">
               <div className="text-center">
                 <CardTitle className="text-2xl font-bold text-gray-900">
-                  {isLogin ? "Bem-vindo de volta!" : "Criar conta"}
+                  {isLogin ? "Bem-vindo de volta!" : "Crie sua conta"}
                 </CardTitle>
                 <CardDescription className="text-gray-600 mt-2">
                   {isLogin
                     ? "Faça login para acessar sua conta"
-                    : "Preencha os dados para criar sua conta"}
+                    : "Preencha os dados para criar uma conta"}
                 </CardDescription>
               </div>
             </CardHeader>
@@ -153,14 +203,14 @@ function App() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {!isLogin && (
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nome completo</Label>
+                    <Label htmlFor="name">Nome</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="name"
                         name="name"
                         type="text"
-                        placeholder="Seu nome completo"
+                        placeholder="Seu nome"
                         value={formData.name}
                         onChange={handleInputChange}
                         className="pl-10 h-12"
@@ -211,49 +261,25 @@ function App() {
                   </div>
                 </div>
 
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirmar senha</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        className="pl-10 h-12"
-                        required
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {isLogin && (
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input type="checkbox" /> <span>Lembrar-me</span>
-                    </label>
-                    <button type="button" className="text-sm text-yellow-600">
-                      Esqueceu a senha?
-                    </button>
-                  </div>
-                )}
-
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-yellow-400 to-yellow-600"
+                  className="w-full h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 flex justify-center items-center"
+                  disabled={isLoading}
                 >
-                  {isLogin ? "Entrar" : "Criar conta"}
+                  {isLoading && <Spinner />}
+                  {isLoading
+                    ? isLogin
+                      ? "Entrando..."
+                      : "Cadastrando..."
+                    : isLogin
+                    ? "Entrar"
+                    : "Cadastrar"}
                 </Button>
 
                 <div className="relative">
                   <Separator className="my-6" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-white px-4 text-sm text-gray-500">
-                      ou
-                    </span>
+                    <span className="bg-white px-4 text-sm text-gray-500">ou</span>
                   </div>
                 </div>
 
@@ -262,7 +288,7 @@ function App() {
                   variant="outline"
                   className="w-full h-12 border-gray-200"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 justify-center">
                     <LogInIcon />
                     Continuar com Google
                   </div>
@@ -272,19 +298,52 @@ function App() {
 
             <CardFooter>
               <div className="w-full text-center">
-                <p>
-                  {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}
-                  <button
-                    type="button"
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="ml-2 text-yellow-600"
-                  >
-                    {isLogin ? "Criar conta" : "Fazer login"}
-                  </button>
-                </p>
+                {isLogin ? (
+                  <p>
+                    Não tem uma conta?
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLogin(false);
+                        setMessage("");
+                        setFormData({ name: "", email: "", password: "" });
+                      }}
+                      className="ml-2 text-yellow-600"
+                    >
+                      Criar conta
+                    </button>
+                  </p>
+                ) : (
+                  <p>
+                    Já tem uma conta?
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLogin(true);
+                        setMessage("");
+                        setFormData({ name: "", email: "", password: "" });
+                      }}
+                      className="ml-2 text-yellow-600"
+                    >
+                      Fazer login
+                    </button>
+                  </p>
+                )}
               </div>
             </CardFooter>
           </Card>
+
+          {message && (
+            <p
+              className={`mt-4 max-w-md mx-auto text-center ${
+                message.toLowerCase().includes("erro")
+                  ? "text-red-600"
+                  : "text-green-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
         </div>
       </div>
     </div>
