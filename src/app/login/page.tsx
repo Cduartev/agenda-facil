@@ -42,6 +42,8 @@ function App() {
     });
   };
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return; // bloqueia múltiplos cliques enquanto está carregando
@@ -51,7 +53,7 @@ function App() {
     if (isLogin) {
       // LOGIN
       try {
-        const res = await fetch("http://localhost:8080/usuarios/login", {
+        const res = await fetch(`${API_URL}/usuarios/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -77,7 +79,7 @@ function App() {
       // CADASTRO
       try {
         const res = await fetch(
-          `http://localhost:8080/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
+          `${API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
             "http://localhost:3000/confirmar-email"
           )}`,
           {
@@ -155,7 +157,9 @@ function App() {
             </div>
             <div>
               <h1 className="text-3xl font-bold">Barber Pro</h1>
-              <p className="text-yellow-400 font-medium">Professional Barbershop</p>
+              <p className="text-yellow-400 font-medium">
+                Professional Barbershop
+              </p>
             </div>
           </div>
           <div className="space-y-6">
@@ -279,7 +283,9 @@ function App() {
                 <div className="relative">
                   <Separator className="my-6" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-white px-4 text-sm text-gray-500">ou</span>
+                    <span className="bg-white px-4 text-sm text-gray-500">
+                      ou
+                    </span>
                   </div>
                 </div>
 

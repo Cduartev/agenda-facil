@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle, Home, Mail, Clock, XCircle } from "lucide-react";
@@ -19,7 +18,9 @@ export default function ConfirmarEmail() {
 
   const [countdown, setCountdown] = useState(5);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading"
+  );
   const [message, setMessage] = useState<string>("Confirmando seu email...");
 
   useEffect(() => {
@@ -28,9 +29,9 @@ export default function ConfirmarEmail() {
       setMessage("Token não encontrado na URL.");
       return;
     }
-
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
     // Chama o backend para confirmar o token
-    fetch(`http://localhost:8080/usuarios/confirmar?token=${encodeURIComponent(token)}`)
+    fetch(`${API_URL}/usuarios/confirmar?token=${encodeURIComponent(token)}`)
       .then(async (res) => {
         if (!res.ok) {
           const text = await res.text();
@@ -83,7 +84,11 @@ export default function ConfirmarEmail() {
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           {status === "success" ? (
-            <div className={`relative ${isAnimating ? "animate-bounce-in" : "opacity-0"}`}>
+            <div
+              className={`relative ${
+                isAnimating ? "animate-bounce-in" : "opacity-0"
+              }`}
+            >
               <div className="absolute inset-0 bg-golden-500 rounded-full animate-golden-glow opacity-30"></div>
               <CheckCircle
                 className="w-20 h-20 text-golden-600 relative z-10 drop-shadow-lg"
@@ -105,7 +110,9 @@ export default function ConfirmarEmail() {
             status === "success"
               ? "border-golden-400/40 bg-white/95"
               : "border-red-400/40 bg-white/90"
-          } backdrop-blur-sm ${isAnimating ? "animate-slide-up" : "opacity-0 translate-y-5"}`}
+          } backdrop-blur-sm ${
+            isAnimating ? "animate-slide-up" : "opacity-0 translate-y-5"
+          }`}
         >
           <CardHeader className="text-center pb-4">
             <CardTitle
@@ -113,7 +120,9 @@ export default function ConfirmarEmail() {
                 status === "success" ? "text-golden-700" : "text-red-600"
               } mb-2`}
             >
-              {status === "success" ? "Email Confirmado!" : "Erro na confirmação"}
+              {status === "success"
+                ? "Email Confirmado!"
+                : "Erro na confirmação"}
             </CardTitle>
             <CardDescription className="text-gray-700 text-base leading-relaxed">
               {message}
@@ -124,14 +133,17 @@ export default function ConfirmarEmail() {
             <CardContent className="space-y-6">
               <div className="flex items-center justify-center space-x-3 p-4 bg-golden-100/80 rounded-lg border border-golden-300/40">
                 <Mail className="w-5 h-5 text-golden-600" />
-                <span className="text-golden-800 font-medium">Verificação concluída com sucesso</span>
+                <span className="text-golden-800 font-medium">
+                  Verificação concluída com sucesso
+                </span>
               </div>
 
               <div className="flex items-center justify-center space-x-2 p-3 bg-gray-100/80 rounded-lg border border-gray-300">
                 <Clock className="w-4 h-4 text-gray-600" />
                 <span className="text-gray-700 text-sm">
                   Redirecionando em{" "}
-                  <span className="font-bold text-golden-600">{countdown}</span> segundos
+                  <span className="font-bold text-golden-600">{countdown}</span>{" "}
+                  segundos
                 </span>
               </div>
 
@@ -160,14 +172,18 @@ export default function ConfirmarEmail() {
 
             {status === "success" && (
               <p className="text-xs text-gray-600 text-center leading-relaxed">
-                Você será redirecionado automaticamente ou pode clicar no botão acima para
-                continuar imediatamente.
+                Você será redirecionado automaticamente ou pode clicar no botão
+                acima para continuar imediatamente.
               </p>
             )}
           </CardFooter>
         </Card>
 
-        <div className={`mt-8 text-center ${isAnimating ? "animate-fade-in" : "opacity-0"}`}>
+        <div
+          className={`mt-8 text-center ${
+            isAnimating ? "animate-fade-in" : "opacity-0"
+          }`}
+        >
           <p
             className={`${
               status === "success" ? "text-golden-700" : "text-red-600"
