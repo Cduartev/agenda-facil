@@ -42,7 +42,6 @@ function App() {
     });
   };
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +52,7 @@ function App() {
     if (isLogin) {
       // LOGIN
       try {
-        const res = await fetch(`${API_URL}/usuarios/login`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -79,8 +78,8 @@ function App() {
       // CADASTRO
       try {
         const res = await fetch(
-          `${API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
-            `${API_URL}/confirmar-email`
+          `${process.env.NEXT_PUBLIC_API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
+            `${process.env.NEXT_PUBLIC_API_URL}/confirmar-email`
           )}`,
           {
             method: "POST",

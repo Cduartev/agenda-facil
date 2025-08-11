@@ -28,8 +28,9 @@ export default function ConfirmarEmailClient() {
       setMessage("Token não encontrado na URL.");
       return;
     }
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    fetch(`${API_URL}/usuarios/confirmar?token=${encodeURIComponent(token)}`)
+  
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/confirmar?token=${encodeURIComponent(token)}`)
       .then(async (res) => {
         if (!res.ok) {
           const text = await res.text();
