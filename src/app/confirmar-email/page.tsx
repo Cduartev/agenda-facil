@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle, Home, Mail, Clock, XCircle } from "lucide-react";
