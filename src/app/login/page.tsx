@@ -42,7 +42,6 @@ function App() {
     });
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
@@ -79,7 +78,7 @@ function App() {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
-            `${process.env.NEXT_PUBLIC_API_URL}/confirmar-email`
+            `${process.env.NEXT_PUBLIC_FRONTEND_URL}/confirmar-email`
           )}`,
           {
             method: "POST",
