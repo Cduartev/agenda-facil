@@ -18,9 +18,8 @@ Ele conta com:
 
 ## 📌 Objetivo  
 - Permitir que **clientes** agendem serviços online  
-- Permitir que **profissionais** visualizem seus horários  
-- Permitir que **administradores** gerenciem usuários, serviços e agendamentos  
-- Garantir o cumprimento das **regras de negócio** como disponibilidade de horários  
+- Permitir que **administradores** visualizem os clientes cadstrados  
+- Permitir que **administradores** gerenciem usuários
 
 ---
 
