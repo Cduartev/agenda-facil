@@ -19,7 +19,7 @@ Ele conta com:
 ## 📌 Objetivo  
 - Permitir que **clientes** agendem serviços online  
 - Permitir que **administradores** visualizem os clientes cadstrados  
-- Permitir que **administradores** gerenciem usuários
+- Permitir que **administradores** gerenciem usuários e agendamentos
 
 ---
 
