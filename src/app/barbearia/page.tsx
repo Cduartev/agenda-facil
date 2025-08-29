@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Scissors, Clock, Users, MapPin, Plus, X, Save } from 'lucide-react';
+import { Scissors, Clock, Users, MapPin, Plus, X, Save, ArrowBigLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,9 +11,7 @@ interface Service {
   id: string;
   name: string;
   price: string;
-  duration: string;
 }
-
 interface Employee {
   id: string;
   name: string;
@@ -34,7 +32,7 @@ function App() {
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [services, setServices] = useState<Service[]>([
-    { id: '1', name: '', price: '', duration: '' }
+    { id: '1', name: '', price: '', }
   ]);
   const [employees, setEmployees] = useState<Employee[]>([
     { id: '1', name: '', specialty: '', phone: '' }
@@ -53,8 +51,7 @@ function App() {
     const newService: Service = {
       id: Date.now().toString(),
       name: '',
-      price: '',
-      duration: ''
+      price: ''
     };
     setServices([...services, newService]);
   };
@@ -113,7 +110,7 @@ function App() {
       employees,
       workingHours
     });
-    alert('Barbearia cadastrada com sucesso!');
+    alert('Horarios atualizados com sucesso');
   };
 
   const dayNames: { [key: string]: string } = {
@@ -132,11 +129,11 @@ function App() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Scissors className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">Cadastro de Barbearia</h1>
+            <h1 className="text-3xl font-bold text-foreground">Ajustar Horarios Barbearia</h1>
           </div>
-          <p className="text-muted-foreground">Preencha todos os dados para cadastrar sua barbearia</p>
+          <p className="text-muted-foreground">Preencha todos os dados</p>
         </div>
-
+           <Button ><ArrowBigLeft></ArrowBigLeft>Voltar</Button>
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Informações Básicas */}
           <Card>
@@ -222,14 +219,6 @@ function App() {
                       value={service.price}
                       onChange={(e) => updateService(service.id, 'price', e.target.value)}
                       placeholder="25,00"
-                    />
-                  </div>
-                  <div className="w-24 space-y-2">
-                    <Label>Duração</Label>
-                    <Input
-                      value={service.duration}
-                      onChange={(e) => updateService(service.id, 'duration', e.target.value)}
-                      placeholder="30min"
                     />
                   </div>
                   {services.length > 1 && (
@@ -367,7 +356,7 @@ function App() {
           <div className="flex justify-center">
             <Button type="submit" size="lg" className="px-8">
               <Save className="w-5 h-5 mr-2" />
-              Cadastrar Barbearia
+              Salvar
             </Button>
           </div>
         </form>
