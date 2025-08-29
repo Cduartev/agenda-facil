@@ -136,7 +136,7 @@ function App() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // Validação: campos não podem ser apenas espaços
+    
     if (!formData.nome.trim()) {
       setError("O nome não pode estar vazio ou conter apenas espaços.");
       return;
@@ -337,14 +337,14 @@ function App() {
                   size="lg"
                   className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-6 text-lg"
                 >
-                  Agendar Agora
+                  <Link href="/barbearia">Agende Agora</Link>
                 </Button>
 
                 <Button
                   size="lg"
                   className="text-white bg-yellow-600 hover:bg-yellow-700 hover:text-black px-8 py-6 text-lg"
                 >
-                  <Link href="/barbearia">Aonde nos Encontar</Link>
+                  <Link href="/">Aonde nos Encontar</Link>
                 </Button>
               </div>
 
