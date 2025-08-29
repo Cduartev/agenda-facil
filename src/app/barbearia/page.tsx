@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Link from "next/link";
 import { Scissors, Clock, Users, MapPin, Plus, X, Save, ArrowBigLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -133,7 +134,12 @@ function App() {
           </div>
           <p className="text-muted-foreground">Preencha todos os dados</p>
         </div>
-           <Button ><ArrowBigLeft></ArrowBigLeft>Voltar</Button>
+             <Link href="/">
+       <Button>
+        <ArrowBigLeft className="mr-2" />
+        Voltar
+      </Button>
+      </Link>
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Informações Básicas */}
           <Card>
