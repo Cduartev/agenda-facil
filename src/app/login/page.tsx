@@ -22,96 +22,92 @@ import {
   User,
   LogInIcon,
 } from "lucide-react";
+import { toast } from "sonner";
 
-function App() {
+export function App() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true); // true = login, false = cadastro
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [message, setMessage] = useState(""); // mensagem sucesso/erro
-  const [isLoading, setIsLoading] = useState(false); // estado para bloquear botão e mostrar loading
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Atualiza os inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Função auxiliar para POST e tratar erro do backend
+  const postData = async (url: string, data: any) => {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
+    const text = await res.text();
+    if (!res.ok) throw new Error(text);
+    return text;
+  };
+
+  // Função para validar campos antes de enviar
+  const validateForm = () => {
+    if (!formData.email.trim() || !formData.password.trim() || (!isLogin && !formData.name.trim())) {
+      toast.error("Preencha todos os campos obrigatórios!");
+      return false;
+    }
+    if (!isLogin && formData.password.length < 6) {
+      toast.error("Senha deve ter pelo menos 6 caracteres");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isLoading) return;
-    setMessage("");
-    setIsLoading(true);
+  e.preventDefault();
+  if (isLoading) return;
 
+  if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
+    toast.error("Preencha todos os campos obrigatórios!");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
     if (isLogin) {
       // LOGIN
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        });
-
-        if (!res.ok) {
-          const errMsg = await res.text();
-          setMessage("Erro no login: " + errMsg);
-          setIsLoading(false);
-          return;
-        }
-
-        router.push("/");
-      } catch (error) {
-        setMessage("Erro ao conectar com backend no login");
-        console.error(error);
-        setIsLoading(false);
-      }
+      await postData(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/login`, {
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+      toast.success("Login realizado com sucesso!");
+      router.push("/");
     } else {
       // CADASTRO
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
-            `${process.env.NEXT_PUBLIC_FRONTEND_URL}/confirmar-email`
-          )}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: formData.name,
-              email: formData.email,
-              password: formData.password,
-            }),
-          }
-        );
+      const payload = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+      };
 
-        if (!res.ok) {
-          const errMsg = await res.text();
-          setMessage("Erro no cadastro: " + errMsg);
-          setIsLoading(false);
-          return;
-        }
+      await postData(
+        `${process.env.NEXT_PUBLIC_API_URL}/usuarios/registrar?linkBaseConfirmacao=${encodeURIComponent(
+          `${process.env.NEXT_PUBLIC_FRONTEND_URL}/confirmar-email`
+        )}`,
+        payload
+      );
 
-        const successMsg = await res.text();
-        setMessage(successMsg);
-        setFormData({ name: "", email: "", password: "" });
-        setIsLogin(true);
-        setIsLoading(false);
-      } catch (error) {
-        setMessage("Erro ao conectar com backend no cadastro");
-        console.error(error);
-        setIsLoading(false);
-      }
+      toast.success("Cadastro realizado! Verifique seu email para confirmar.");
+      setFormData({ name: "", email: "", password: "" });
+      setIsLogin(true);
     }
-  };
+  } catch (error: any) {
+    toast.error(error.message || "Erro inesperado ao conectar com backend");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-  // Spinner simples (círculo giratório) via CSS inline
+  // Spinner inline
   const Spinner = () => (
     <svg
       className="animate-spin h-5 w-5 text-white inline-block mr-2"
@@ -119,19 +115,8 @@ function App() {
       fill="none"
       viewBox="0 0 24 24"
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      ></circle>
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-      ></path>
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
     </svg>
   );
 
@@ -309,7 +294,6 @@ function App() {
                       type="button"
                       onClick={() => {
                         setIsLogin(false);
-                        setMessage("");
                         setFormData({ name: "", email: "", password: "" });
                       }}
                       className="ml-2 text-yellow-600"
@@ -324,7 +308,6 @@ function App() {
                       type="button"
                       onClick={() => {
                         setIsLogin(true);
-                        setMessage("");
                         setFormData({ name: "", email: "", password: "" });
                       }}
                       className="ml-2 text-yellow-600"
@@ -336,18 +319,6 @@ function App() {
               </div>
             </CardFooter>
           </Card>
-
-          {message && (
-            <p
-              className={`mt-4 max-w-md mx-auto text-center ${
-                message.toLowerCase().includes("erro")
-                  ? "text-red-600"
-                  : "text-green-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </div>
       </div>
     </div>
